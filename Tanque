@@ -1,54 +1,75 @@
-clear ;
-
-h=[0];v=[1,0,1,1,1,3,4,5,6,3,4,5,6,6,7,5,3,7,8,5,5,5,4,5,2,3,2,1,1,1,1,1];
-des=[2,2,2,2,2,2,2,2,2,2,2,5,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3];e=[0];tfinal=30;t=1;tt=0;
-
-H=[0];
-E=[];
-
-// cálculos dos parâmetros vinculados ao desvio do setpoint(erro)
-       
+clear 
+// define altura inicial do reservatorio 'h' 
+h=3;
+// inicia vetor correspondente as alturas em cada loop
+H=[h];
+// carrega arquivo exercicio 
+load('exercicio1.dat','ex1','ex2','ex3');
+// define vetor vazao  'v'
+v=ex3;
+// define vetor nivel desejado 
+des=[2,2,2,2,2,2,2,2,2,2,2,5,5,5,5,5,5,5,5,5,5,5,5,3,3,3,3,3,3,3];
+// calcula erro inicial 'E'
+E=[des(1)-h];
+//inicia variaveis correspondente ao problema, tempo inicial 't', tempo de execuçao 'tfinal'  e tempo referencial 't0'
+tfinal=30;t=1;t0=0;
+// inicia o problema
        while t<tfinal
- 
-// cálculos dos parâmetros vinculados ao desvio do setpoint(erro)
- 
+// cálculos erro intantaneo 'e'
+e= (des(t)-h);
+// armazena altura instantanea 'h' no vetor 'H'
+H=[H,h];
+// armazena o valor do erro absoluto 'abs(e)' instantaneo no vetor 'E' 
+E=[E,abs(e)];
 
-h(t)=h(t)-v(t);
-e1= (des(t)-h(t));
+// calcula as taxa de variaçoes da variaveis 'V','H','E'
 dv=diff(v);
+dH=diff(H);
+dE=diff(E);
 
-if e1 > 0 
- 
-    if (e1 > 0 & e1 <= 1 ) 
-        A=0;
-    end 
-    if (e1 > 1 & e1 <= 4) 
-        A=2.5;
-    end
-        if (e1 > 4 & e1 <=7 )  
-        A=5;
-    end
-    if e1 >7    
-        A=10;
-    end    
-    
+// atribui valores intantaneos do erro 'erro', nivel de agua 'altura_inst',variaçao da vazao 'taxa_vazap_inst', variaçao da altura 'taxa_altura', variaçao do erro 'taxa_erro' 
+erro=e;
+altura_inst=H(t);
+taxa_vazao_inst=dv(t);
+taxa_altura=dH(t);
+taxa_erro=dE(t);
+
+
+
+// predicadso de controle 
+
+if (h>0);
+if (e>0) & (e<=2.5);
+ A=5;
+end;
+   
+   
+if (e>2.5) & (e<=5);
+ A=10;
+end;
+
+if (e>5) & (e<=10);
+ A=10;
+end;
+   
+if (e<=0);
+ A=0;
+end;
+end;
+
+
+if (h<0);
+ A=10;
+end;
+   
+h=h+A;
+h=h-v(t);  
+  
+
+ t=t+1;
+ t0=[t0,t];       
 end
-
-if e1 <=0
-
-   A=0  ;
-    
-end
-
-h=[h,[h(t)+A]];
-e2= (des(t)-h(t+1));
-
-E=[E;abs(e2)]; 
-
-H=[H,h(t+1)] ;
-
- e=[e,e1];t=t+1;tt=[tt,t];       
-end
-disp(sum(E))
-
-plot(tt,H,tt,des)
+//calcula o erro total
+sum(E)
+//gera grafico
+plot(t0,H,t0,des);
