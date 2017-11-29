@@ -27,7 +27,7 @@ dv=diff(v);
 dH=diff(H);
 dE=diff(E);
 
-// atribui valores intantaneos do erro 'erro', nivel de agua 'altura_inst',variaçao da vazao 'taxa_vazap_inst', variaçao da altura 'taxa_altura', variaçao do erro 'taxa_erro' 
+// atribui valores instantaneos do erro 'erro', nivel de agua 'altura_inst',variaçao da vazao 'taxa_vazap_inst', variaçao da altura 'taxa_altura', variaçao do erro 'taxa_erro' 
 erro=e;
 altura_inst=H(t);
 taxa_vazao_inst=dv(t);
@@ -36,28 +36,22 @@ taxa_erro=dE(t);
 
 
 
-// predicadso de controle 
+// predicados de controle 
 
 if (h>0);
 if (e>0) & (e<=2.5);
- A=5;
+ A=1;
 end;
-   
-   
 if (e>2.5) & (e<=5);
- A=10;
+ A=4;
 end;
-
 if (e>5) & (e<=10);
- A=10;
+ A=8;
 end;
-   
 if (e<=0);
  A=0;
 end;
 end;
-
-
 if (h<0);
  A=10;
 end;
